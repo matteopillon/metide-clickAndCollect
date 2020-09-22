@@ -9,7 +9,7 @@ namespace ClickAndCollect.Models
     {
         public string JwtToken { get; set; }
         public string ExternalToken { get; set; }
-
         public string Data { get; set; }
+        public DateTime UpdatedOnUTC { get; set; }
     }
 }

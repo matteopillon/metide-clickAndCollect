@@ -1,4 +1,5 @@
 ﻿
+using ClickAndCollect.Models;
 using System.Security.Claims;
 
 namespace ClickAndCollect.Auth

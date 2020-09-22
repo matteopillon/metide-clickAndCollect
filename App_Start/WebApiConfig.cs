@@ -3,11 +3,14 @@ using ClickAndCollect.Auth;
 using ClickAndCollect.Data;
 using ClickAndCollect.IOC;
 using ClickAndCollect.Logs;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Http;
 using Unity;
+using Unity.Injection;
 using Unity.Lifetime;
 
 namespace ClickAndCollect
@@ -33,9 +36,20 @@ namespace ClickAndCollect
             //Dependecy Injection configuration
 
             var container = new UnityContainer();
+            // Logger log4net
+            container.RegisterType<ILogger, Log4netLogger>(new SingletonLifetimeManager());
+        
+            // Cache with SQL Server Store configuration
+            container.RegisterFactory<ITokenStore>((unityContainer) => {
+                var connectionString = ConfigurationManager.ConnectionStrings["token"];
+                if (connectionString == null) throw new ApplicationException("Not token connectionString defined");
+                return new CacheTokenStore(new SQLTokenStore(connectionString.ConnectionString, unityContainer.Resolve<ILogger>()));
+            }, new SingletonLifetimeManager());
+
+            // Token Manager
             container.RegisterType<ITokenManager, JwtTokenManager>(new SingletonLifetimeManager());
-            container.RegisterType<ILogger,Log4netLogger>(new SingletonLifetimeManager());
-            container.RegisterType<ITokenStore,SQLTokenStore>();
+
+
             config.DependencyResolver = new UnityResolver(container);
         }
     }
