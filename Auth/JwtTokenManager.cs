@@ -12,12 +12,13 @@ namespace ClickAndCollect.Auth
 {
     public class JwtTokenManager: ITokenManager
     {
-        private const string Secret = "853BDA13BAC62B7224AF452F5658FBE01D0FDEBD0B1BD7638F289B37D3C06E44";
+        private readonly string secret;
         private readonly int expireMinutes;
         private readonly ILogger logger;
 
-        public JwtTokenManager(ILogger logger, int expireMinutes = 20)
+        public JwtTokenManager(ILogger logger,string secret, int expireMinutes = 20)
         {
+            this.secret = secret;
             this.expireMinutes = expireMinutes;
             this.logger = logger;
         }
@@ -25,7 +26,7 @@ namespace ClickAndCollect.Auth
         public string GenerateToken(string username)
         {
             logger.Debug(nameof(username));
-            var symmetricKey = Convert.FromBase64String(Secret);
+            var symmetricKey = Convert.FromBase64String(secret);
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var now = DateTime.UtcNow;
@@ -59,7 +60,7 @@ namespace ClickAndCollect.Auth
                 if (jwtToken == null)
                     return null;
 
-                var symmetricKey = Convert.FromBase64String(Secret);
+                var symmetricKey = Convert.FromBase64String(secret);
 
                 var validationParameters = new TokenValidationParameters()
                 {

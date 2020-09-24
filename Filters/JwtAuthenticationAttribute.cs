@@ -1,4 +1,5 @@
 ﻿using ClickAndCollect.Auth;
+using ClickAndCollect.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,12 @@ namespace ClickAndCollect.Filters
         public bool AllowMultiple => false;
 
         private ITokenManager tokenManager = null;
+        private bool checkTokenInStore;
+
+        public JwtAuthenticationAttribute(bool checkTokenInStore = true)
+        {
+            this.checkTokenInStore = checkTokenInStore;
+        }
 
         public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
@@ -34,10 +41,29 @@ namespace ClickAndCollect.Filters
             }
             var dependencyScope = context.Request.GetDependencyScope();
             tokenManager = dependencyScope.GetService(typeof(ITokenManager)) as ITokenManager;
+         
             if (tokenManager == null)
             {
                 context.ErrorResult = new AuthenticationFailureResult("Missing Jwt Token Manager", request);
                 return;
+            }
+
+            var tokenStore = dependencyScope.GetService(typeof(ITokenStore)) as ITokenStore;
+            if (tokenStore == null)
+            {
+                context.ErrorResult = new AuthenticationFailureResult("Missing Jwt Token Store", request);
+                return;
+            }
+
+            //Check if jwt token exists on store (only if the user is logged)
+            if (checkTokenInStore)
+            {
+                var loginToken = tokenStore.GetAuthToken(authorization.Parameter);
+                if (loginToken == null)
+                {
+                    context.ErrorResult = new AuthenticationFailureResult("Token not found", request);
+                    return;
+                }
             }
 
             var token = authorization.Parameter;

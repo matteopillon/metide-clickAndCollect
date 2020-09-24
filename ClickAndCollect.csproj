@@ -225,7 +225,7 @@
     <Compile Include="Controllers\ExternaJWTBaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Data\CacheTokenStore.cs" />
     <Compile Include="Data\ITokenStore.cs" />
     <Compile Include="Data\SQLTokenStore.cs" />
@@ -240,8 +240,14 @@
     <Compile Include="Logs\ILogger.cs" />
     <Compile Include="Logs\Log4netLogger.cs" />
     <Compile Include="Models\AuthTokenData.cs" />
+    <Compile Include="Models\ExternalLogin.cs" />
+    <Compile Include="Models\ExternalUser.cs" />
+    <Compile Include="Models\LoginRequest.cs" />
+    <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Auth\JwtTokenManager.cs" />
+    <Compile Include="Proxies\IServiceProxy.cs" />
+    <Compile Include="Proxies\TestServiceProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
